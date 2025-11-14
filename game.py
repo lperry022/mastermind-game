@@ -1,7 +1,7 @@
 # -----------------------START OF PART 1: GENERATE A RANDOM CODE-----------------------#
 import random
 
-COLOURS = ["Red", "Blue", "Green", "Yellow", "Purple", "Orange"]
+COLOURS = ["RED", "BLUE", "GREEN", "YELLOW", "PURPLE", "ORANGE"]
 # variable is written in all captials as it is a constant, so it is a variable that will not change
 # in the real game there are 6 colours, so we will offer our players 6 colours to choose from
 TRIES = 10
@@ -47,13 +47,13 @@ def guess_code():
     # this all is put into a while loop so that the user can keep trying until they enter a valid input
     # continue statement is used to skip the rest of the code in the loop and go back to the start of the loop
         for colour in guess:
-            if colour in COLOURS:
+            if colour not in COLOURS:
                 print(f"Invalid colour: {colour}. Please try again.")
                 break
         else:
-            break
-    return guess
+            return guess
     # we return the guess list so that we can use it later in the game
+
 
 # -----------------------END OF PART 2: ALLOW THE USER TO GUESS THE CODE-----------------------#
 
@@ -70,21 +70,23 @@ def check_code(guess, real_code):
     for colour in real_code:
         if colour not in colour_counts:
             colour_counts[colour] = 0
-            colour_counts[colour] += 1
+        colour_counts[colour] += 1
 # this for loop counts the number of times each colour appears in the real code and stores it in a dictionary
 
-    for guess, real_colour in zip(guess, real_code):
+    for guess_colour, real_colour in zip(guess, real_code):
         # zip() function is used to combine two lists into a list of tuples
         # for example, if guess = ["Red", "Blue", "Green", "Yellow"] and real_code = ["Blue", "Red", "Green", "Yellow"]
-        if guess == real_colour:
+        if guess_colour == real_colour:
             correct_position += 1
-            colour_counts[guess] -= 1
+            colour_counts[guess_colour] -= 1
+
+
 # this for loop compares the user's guess to the real code and counts the number of colours that are in the correct position
 # this removes the colour from the dictionary so that it is not counted again in the next for loop
-        for guess_colour, real_colour in zip(guess, real_code):
-            if guess_colour in colour_counts and colour_counts[guess_colour] > 0:
-                incorrect_position += 1
-                colour_counts[guess_colour] -= 1
+    for guess_colour, real_colour in zip(guess, real_code):
+        if guess_colour != real_colour and colour_counts.get(guess_colour, 0) > 0:
+            incorrect_position += 1
+            colour_counts[guess_colour] -= 1
 # this for loop compares the user's guess to the real code and counts the number of colours that are in the incorrect position
 # this checks if the colour is in the dictionary and if the count is greater than 0
     return correct_position, incorrect_position
@@ -96,6 +98,9 @@ def check_code(guess, real_code):
 
 
 def game():
+    print(
+        f"Welcome to Mastermind! You have {TRIES} tries to guess the code...")
+    print("The possible colours are:", *COLOURS)
     code = generate_code()
     for attempt in range(1, TRIES + 1):
         print(f"Attempt {attempt} of {TRIES}")
@@ -104,11 +109,19 @@ def game():
 # we call the guess_code function to get the user's guess
         correct_position, incorrect_position = check_code(guess, code)
 # we call the check_code function to compare the user's guess to the real code
-        print(
-            f"Correct Position: {correct_position}, Incorrect Position: {incorrect_position}")
         if correct_position == CODE_LENGTH:
-            print("Congratulations! You've guessed the code!")
+            print(
+                f"Congratulations! You've guessed the code in {attempt} tries!")
             break
+        print(
+            f"Correct Positions: {correct_position}, Incorrect Positions: {incorrect_position}")
+    else:
+        print("Sorry, you've used all your tries. The correct code was:", *code)
 # if the user has guessed all 4 colours in the correct position, they win the game
 # if the user has not guessed the code in the given number of tries, they lose the game
+
+
+if __name__ == "__main__":
+    game()
+# this line checks if the script is being run directly (not imported as a module) and calls the game function to start the game
 # -----------------------END OF PART 4: RUN THE GAME-----------------------#
